@@ -8,6 +8,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include <cassert>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -2336,6 +2337,10 @@ private:
               throw std::runtime_error("Unexpected block: " + keyword);
             }
           } else if (std::regex_search(it, end, match, non_text_open_regex)) {
+            if (!match.position()) {
+                assert(match[0] == "{#");
+                throw std::runtime_error("Missing end of comment tag");
+            }
             auto text_end = it + match.position();
             text = std::string(it, text_end);
             it = text_end;
